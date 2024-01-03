@@ -1,0 +1,97 @@
+#include <iostream>
+
+class Fraction {
+private:
+    int numerator;
+    int denominator;
+
+public:
+    Fraction(int num = 0, int denom = 1) : numerator(num), denominator(denom) {
+        if (denominator == 0) {
+            std::cerr << "Error: Denominator cannot be zero. Setting denominator to 1.\n";
+            denominator = 1;
+        }
+        reduce();
+    }
+
+    int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+    void reduce() {
+        int commonDivisor = gcd(numerator, denominator);
+        numerator /= commonDivisor;
+        denominator /= commonDivisor;
+    }
+
+    Fraction operator+(const Fraction& other) const {
+        int newNumerator = numerator * other.denominator + other.numerator * denominator;
+        int newDenominator = denominator * other.denominator;
+        return Fraction(newNumerator, newDenominator);
+    }
+
+    Fraction operator-(const Fraction& other) const {
+        int newNumerator = numerator * other.denominator - other.numerator * denominator;
+        int newDenominator = denominator * other.denominator;
+        return Fraction(newNumerator, newDenominator);
+    }
+
+    Fraction operator*(const Fraction& other) const {
+        int newNumerator = numerator * other.numerator;
+        int newDenominator = denominator * other.denominator;
+        return Fraction(newNumerator, newDenominator);
+    }
+
+    Fraction operator/(const Fraction& other) const {
+        if (other.numerator == 0) {
+            std::cerr << "Error: Division by zero. Returning original fraction.\n";
+            return *this;
+        }
+
+        int newNumerator = numerator * other.denominator;
+        int newDenominator = denominator * other.numerator;
+        return Fraction(newNumerator, newDenominator);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Fraction& fraction);
+
+    friend std::istream& operator>>(std::istream& is, Fraction& fraction);
+};
+
+std::ostream& operator<<(std::ostream& os, const Fraction& fraction) {
+    os << fraction.numerator << '/' << fraction.denominator;
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Fraction& fraction) {
+    is >> fraction.numerator >> fraction.denominator;
+
+    if (fraction.denominator == 0) {
+        std::cerr << "Error: Denominator cannot be zero. Setting denominator to 1.\n";
+        fraction.denominator = 1;
+    }
+
+    fraction.reduce();
+
+    return is;
+}
+
+int main() {
+    Fraction frac1(3, 4);
+    Fraction frac2(2, 5);
+
+    Fraction sum = frac1 + frac2;
+    Fraction difference = frac1 - frac2;
+    Fraction product = frac1 * frac2;
+    Fraction quotient = frac1 / frac2;
+
+    std::cout << "Fraction 1: " << frac1 << std::endl;
+    std::cout << "Fraction 2: " << frac2 << std::endl;
+
+    std::cout << "Sum: " << sum << std::endl;
+    std::cout << "Difference: " << difference << std::endl;
+    std::cout << "Product: " << product << std::endl;
+    std::cout << "Quotient: " << quotient << std::endl;
+
+    return 0;
+}

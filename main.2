@@ -1,0 +1,70 @@
+#include <iostream>
+
+class Complex {
+private:
+    double real;
+    double imaginary;
+
+public:
+    Complex(double r = 0.0, double i = 0.0) : real(r), imaginary(i) {}
+
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imaginary + other.imaginary);
+    }
+
+    Complex operator-(const Complex& other) const {
+        return Complex(real - other.real, imaginary - other.imaginary);
+    }
+
+    Complex operator*(const Complex& other) const {
+        return Complex((real * other.real) - (imaginary * other.imaginary),
+                       (real * other.imaginary) + (imaginary * other.real));
+    }
+
+    Complex operator/(const Complex& other) const {
+        if (other.real == 0.0 && other.imaginary == 0.0) {
+            std::cerr << "Error: Division by zero. Returning original complex number.\n";
+            return *this;
+        }
+
+        double denominator = other.real * other.real + other.imaginary * other.imaginary;
+        double newReal = (real * other.real + imaginary * other.imaginary) / denominator;
+        double newImaginary = (imaginary * other.real - real * other.imaginary) / denominator;
+
+        return Complex(newReal, newImaginary);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Complex& complex);
+
+    friend std::istream& operator>>(std::istream& is, Complex& complex);
+};
+
+std::ostream& operator<<(std::ostream& os, const Complex& complex) {
+    os << complex.real << " + " << complex.imaginary << "i";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Complex& complex) {
+    is >> complex.real >> complex.imaginary;
+    return is;
+}
+
+int main() {
+    Complex num1(2.0, 3.0);
+    Complex num2(1.0, -2.0);
+
+    Complex sum = num1 + num2;
+    Complex difference = num1 - num2;
+    Complex product = num1 * num2;
+    Complex quotient = num1 / num2;
+
+    std::cout << "Complex Number 1: " << num1 << std::endl;
+    std::cout << "Complex Number 2: " << num2 << std::endl;
+
+    std::cout << "Sum: " << sum << std::endl;
+    std::cout << "Difference: " << difference << std::endl;
+    std::cout << "Product: " << product << std::endl;
+    std::cout << "Quotient: " << quotient << std::endl;
+
+    return 0;
+}
